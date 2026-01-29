@@ -1,6 +1,5 @@
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * GameDao - handles CRUD for Act, Run, Puzzle, Sigil, Tribe, Card, Item, Character, EncounterType
@@ -471,7 +470,7 @@ public class GameDao implements AutoCloseable {
     }
 
     // -------------------- Character --------------------
-    public com.example.model.Character createCharacter(com.example.model.Character c) throws SQLException {
+    public Character createCharacter(Character c) throws SQLException {
         String sql = "INSERT INTO `Character` (name, notes, canFight, discovered_in_run_id) VALUES (?, ?, ?, ?)";
         try (PreparedStatement st = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             st.setString(1, c.getName()); st.setString(2, c.getNotes()); st.setInt(3, c.isCanFight()?1:0);
@@ -482,13 +481,13 @@ public class GameDao implements AutoCloseable {
             return c;
         }
     }
-    public com.example.model.Character getCharacterById(int id) throws SQLException {
+    public Character getCharacterById(int id) throws SQLException {
         String sql = "SELECT * FROM `Character` WHERE id=?";
         try (PreparedStatement st = conn.prepareStatement(sql)) {
             st.setInt(1,id);
             try (ResultSet rs = st.executeQuery()) {
                 if (rs.next()) {
-                    com.example.model.Character c = new com.example.model.Character();
+                    Character c = new Character();
                     c.setId(rs.getInt("id")); c.setName(rs.getString("name")); c.setNotes(rs.getString("notes")); c.setCanFight(rs.getInt("canFight")==1);
                     int runId = rs.getInt("discovered_in_run_id"); if(!rs.wasNull()){ Run r = new Run(); r.setId(runId); c.setDiscoveredInRun(r); }
                     c.setAppearsInActs(getActsForCharacter(id));
@@ -498,7 +497,7 @@ public class GameDao implements AutoCloseable {
         }
         return null;
     }
-    public boolean updateCharacter(com.example.model.Character c) throws SQLException {
+    public boolean updateCharacter(Character c) throws SQLException {
         String sql = "UPDATE `Character` SET name=?, notes=?, canFight=?, discovered_in_run_id=? WHERE id=?";
         try (PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1,c.getName()); st.setString(2,c.getNotes()); st.setInt(3, c.isCanFight()?1:0);
@@ -551,7 +550,7 @@ public class GameDao implements AutoCloseable {
                     EncounterType e = new EncounterType();
                     e.setId(rs.getInt("id")); e.setName(rs.getString("name")); e.setNarration(rs.getString("narration")); e.setNotes(rs.getString("notes"));
                     e.setIcon(rs.getString("icon")); e.setBoss(rs.getInt("isBoss")==1);
-                    int charId = rs.getInt("character_id"); if(!rs.wasNull()){ com.example.model.Character c = new com.example.model.Character(); c.setId(charId); e.setCharacter(c); }
+                    int charId = rs.getInt("character_id"); if(!rs.wasNull()){ Character c = new Character(); c.setId(charId); e.setCharacter(c); }
                     int runId = rs.getInt("discovered_in_run_id"); if(!rs.wasNull()){ Run r = new Run(); r.setId(runId); e.setDiscoveredInRun(r); }
                     e.setAppearsInActs(getActsForEncounterType(id));
                     return e;

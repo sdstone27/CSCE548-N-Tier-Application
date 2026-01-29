@@ -48,7 +48,7 @@ public class App {
             System.out.println("Created Item: " + item);
 
             // Create a Character
-            com.example.model.Character character = new com.example.model.Character();
+            Character character = new Character();
             character.setName("Test Character");
             character.setCanFight(true);
             character.setDiscoveredInRun(run);
