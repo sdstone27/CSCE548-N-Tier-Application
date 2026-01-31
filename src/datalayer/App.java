@@ -4,9 +4,9 @@ import java.util.Arrays;
 public class App {
     public static void main(String[] args) {
         // NOTE: change credentials as appropriate
-        String jdbcUrl = "jdbc:mariadb://localhost:3306/game_db";
-        String user = "root";
-        String pass = "password";
+        String jdbcUrl = "jdbc:mariadb://localhost:3306/game_journal_db";
+        String user = "game_journal_db_admin";
+        String pass = "very_secure_password";
 
         try (GameDao dao = new GameDao(jdbcUrl, user, pass)) {
             System.out.println("Connected.");

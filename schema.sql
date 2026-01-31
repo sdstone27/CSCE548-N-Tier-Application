@@ -1,5 +1,7 @@
-CREATE DATABASE IF NOT EXISTS game_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE game_db;
+CREATE DATABASE IF NOT EXISTS game_journal_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS 'game_journal_db_admin'@'localhost' IDENTIFIED BY 'very_secure_password';
+GRANT ALL PRIVILEGES ON game_journal_db.* TO 'game_journal_db_admin'@'localhost';
+USE game_journal_db;
 
 -- Acts
 CREATE TABLE IF NOT EXISTS Act (

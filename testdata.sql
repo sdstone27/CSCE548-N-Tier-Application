@@ -1,5 +1,5 @@
 -- File: db/testdata.sql
-USE game_db;
+USE game_journal_db;
 
 -- Acts
 INSERT INTO Act (number, description, notes) VALUES
