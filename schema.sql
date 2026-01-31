@@ -129,6 +129,16 @@ CREATE TABLE IF NOT EXISTS Card_Act (
   FOREIGN KEY (act_id) REFERENCES Act(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- Card <-> Sigil
+CREATE TABLE IF NOT EXISTS Card_Sigil (
+  card_id INT NOT NULL,
+  sigil_id INT NOT NULL,
+  PRIMARY KEY (card_id, sigil_id),
+  FOREIGN KEY (card_id) REFERENCES Card(id) ON DELETE CASCADE,
+  FOREIGN KEY (sigil_id) REFERENCES Sigil(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+
 -- Item <-> Act
 CREATE TABLE IF NOT EXISTS Item_Act (
   item_id INT NOT NULL,

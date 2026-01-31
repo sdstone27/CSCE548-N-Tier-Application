@@ -9,6 +9,7 @@ public class Card {
     private Integer power; // nullable
     private Integer health;
     private String cost;
+    private List<Sigil> sigils;
     private boolean isRare;
     private boolean isUnique;
     private List<Tribe> tribes;
@@ -25,6 +26,7 @@ public class Card {
     public Integer getPower(){return power;} public void setPower(Integer power){this.power=power;}
     public Integer getHealth(){return health;} public void setHealth(Integer health){this.health=health;}
     public String getCost(){return cost;} public void setCost(String cost){this.cost=cost;}
+    public List<Sigil> getSigils(){return sigils;} public void setSigils(List<Sigil> sigils){this.sigils=sigils;}
     public boolean isRare(){return isRare;} public void setRare(boolean rare){isRare=rare;}
     public boolean isUnique(){return isUnique;} public void setUnique(boolean unique){isUnique=unique;}
     public List<Tribe> getTribes(){return tribes;} public void setTribes(List<Tribe> tribes){this.tribes=tribes;}

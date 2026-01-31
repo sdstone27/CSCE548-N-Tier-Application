@@ -319,6 +319,9 @@ public class GameDao implements AutoCloseable {
             if (c.getAppearsInActs()!=null) {
                 for (Act a : c.getAppearsInActs()) addCardToAct(c.getId(), a.getId());
             }
+            if (c.getSigils()!=null) {
+                for (Sigil s : c.getSigils()) addSigilToCard(s.getId(),c.getId());
+            }
             return c;
         }
     }
@@ -341,13 +344,14 @@ public class GameDao implements AutoCloseable {
                     int runId = rs.getInt("discovered_in_run_id"); if(!rs.wasNull()){ Run r = new Run(); r.setId(runId); c.setDiscoveredInRun(r); }
                     c.setTribes(getTribesForCard(id));
                     c.setAppearsInActs(getActsForCard(id));
+                    c.setSigils(getSigilsForCard(id));
                     return c;
                 }
             }
         }
         return null;
     }
-    public boolean updateCard(Card c) throws SQLException {
+    public boolean updateCard(Card c) throws SQLException { 
         String sql = "UPDATE Card SET name=?, narration=?, notes=?, power=?, health=?, cost=?, isRare=?, isUnique=?, discovered_in_run_id=? WHERE id=?";
         try (PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1,c.getName()); st.setString(2,c.getNarration()); st.setString(3,c.getNotes());
@@ -359,15 +363,21 @@ public class GameDao implements AutoCloseable {
             if (c.getDiscoveredInRun()!=null) st.setInt(9,c.getDiscoveredInRun().getId()); else st.setNull(9, Types.INTEGER);
             st.setInt(10, c.getId());
             boolean ok = st.executeUpdate()>0;
-            // Synchronize tribes and acts: naive approach remove existing then add new
+            // Synchronize tribes, sigils, and acts: naive approach remove existing then add new
             try (PreparedStatement del = conn.prepareStatement("DELETE FROM Card_Tribe WHERE card_id=?")) {
                 del.setInt(1, c.getId()); del.executeUpdate();
             }
             if (c.getTribes()!=null) for (Tribe t : c.getTribes()) addCardToTribe(c.getId(), t.getId());
+
             try (PreparedStatement del2 = conn.prepareStatement("DELETE FROM Card_Act WHERE card_id=?")) {
                 del2.setInt(1, c.getId()); del2.executeUpdate();
             }
             if (c.getAppearsInActs()!=null) for (Act a : c.getAppearsInActs()) addCardToAct(c.getId(), a.getId());
+            
+            try (PreparedStatement del2 = conn.prepareStatement("DELETE FROM Card_Sigil WHERE card_id=?")) {
+                del2.setInt(1, c.getId()); del2.executeUpdate();
+            }
+            if (c.getSigils()!=null) for (Sigil s : c.getSigils()) addSigilToCard(s.getId(),c.getId());
             return ok;
         }
     }
@@ -409,6 +419,22 @@ public class GameDao implements AutoCloseable {
         return out;
     }
 
+    public void addSigilToCard(int sigilId, int cardId) throws SQLException {
+        try (PreparedStatement st = conn.prepareStatement("INSERT IGNORE INTO Card_Sigil (card_id, sigil_id) VALUES (?,?)")) {
+            st.setInt(1, cardId); st.setInt(2, sigilId); st.executeUpdate();
+        }
+    }
+    public List<Sigil> getSigilsForCard(int cardId) throws SQLException {
+        List<Sigil> out = new ArrayList<>();
+        String sql = "SELECT a.* FROM Sigil a JOIN Card_Sigil ca ON a.id=ca.sigil_id WHERE ca.card_id=?";
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1,cardId);
+            try (ResultSet rs = st.executeQuery()) {
+                while(rs.next()){ Sigil s = new Sigil(); s.setId(rs.getInt("id")); s.setName(rs.getString("name")); s.setDescription(rs.getString("description")); s.setIcon(rs.getString("icon")); s.setNotes(rs.getString("notes")); out.add(s); }
+            }
+        }
+        return out;
+    }
     // -------------------- Item --------------------
     public Item createItem(Item it) throws SQLException {
         String sql = "INSERT INTO Item (name, narration, notes, discovered_in_run_id) VALUES (?, ?, ?, ?)";
