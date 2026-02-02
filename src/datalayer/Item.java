@@ -15,7 +15,7 @@ public class Item {
     public String getNotes(){return notes;} public void setNotes(String n){this.notes=n;}
     public Run getDiscoveredInRun(){return discoveredInRun;} public void setDiscoveredInRun(Run r){this.discoveredInRun=r;}
     public List<Act> getAppearsInActs(){return appearsInActs;} public void setAppearsInActs(List<Act> a){this.appearsInActs=a;}
-    @Override public String toString(){ return "Item{id="+id+", name="+name+"}"; }
+    @Override public String toString(){ return "Item{id="+id+", name="+name+", notes="+notes+"}";}
     @Override public boolean equals(Object o){ return (o instanceof Item)&&((Item)o).id==id; }
     @Override public int hashCode(){ return Objects.hash(id); }
 }

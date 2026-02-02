@@ -90,7 +90,7 @@ public class GameDao implements AutoCloseable {
         }
     }
     public Run getRunById(int id) throws SQLException {
-        String sql = "SELECT r.*, a.id as act_id, a.number as act_number FROM Run r LEFT JOIN Act a ON r.act_id=a.id WHERE r.id=?";
+        String sql = "SELECT r.*, a.number as act_number, a.description as act_description, a.notes as act_notes FROM Run r LEFT JOIN Act a ON r.act_id=a.id WHERE r.id=?";
         try (PreparedStatement st = conn.prepareStatement(sql)) {
             st.setInt(1,id);
             try (ResultSet rs = st.executeQuery()) {
@@ -104,6 +104,8 @@ public class GameDao implements AutoCloseable {
                         Act a = new Act();
                         a.setId(actId);
                         a.setNumber(rs.getInt("act_number"));
+                        a.setDescription(rs.getString("act_description"));
+                        a.setNotes(rs.getString("act_notes"));
                         r.setAct(a);
                     }
                     return r;
@@ -117,7 +119,7 @@ public class GameDao implements AutoCloseable {
         try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery("SELECT * FROM Run")) {
             while(rs.next()){
                 Run r = new Run(); r.setId(rs.getInt("id")); r.setNumber(rs.getInt("number")); r.setNotes(rs.getString("notes"));
-                int actId = rs.getInt("act_id"); if(!rs.wasNull()){ Act a = new Act(); a.setId(actId); r.setAct(a); }
+                int actId = rs.getInt("act_id"); if(!rs.wasNull()){ r.setAct(getActById(actId)); }
                 out.add(r);
             }
         }
@@ -172,6 +174,17 @@ public class GameDao implements AutoCloseable {
         }
         return null;
     }
+    public List<Puzzle> listPuzzles() throws SQLException {
+        List<Puzzle> out = new ArrayList<>();
+        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery("SELECT * FROM Puzzle")) {
+            while(rs.next()){
+                Puzzle p = new Puzzle();
+                p.setId(rs.getInt("id")); p.setName(rs.getString("name")); p.setNotes(rs.getString("notes")); p.setReward(rs.getString("reward"));
+                out.add(p);
+            }
+        }
+        return out;
+    }
     public boolean updatePuzzle(Puzzle p) throws SQLException {
         String sql = "UPDATE Puzzle SET name=?, notes=?, reward=?, act_id=?, discovered_in_run_id=? WHERE id=?";
         try (PreparedStatement st = conn.prepareStatement(sql)) {
@@ -225,6 +238,17 @@ public class GameDao implements AutoCloseable {
             }
         }
         return null;
+    }
+    public List<Sigil> listSigils() throws SQLException {
+        List<Sigil> out = new ArrayList<>();
+        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery("SELECT * FROM Sigil")) {
+            while(rs.next()){
+                Sigil s = new Sigil();
+                s.setId(rs.getInt("id")); s.setName(rs.getString("name")); s.setDescription(rs.getString("description")); s.setIcon(rs.getString("icon")); s.setNotes(rs.getString("notes"));
+                out.add(s);
+            }
+        }
+        return out;
     }
     public boolean updateSigil(Sigil s) throws SQLException {
         String sql = "UPDATE Sigil SET name=?, description=?, icon=?, notes=?, discovered_in_run_id=? WHERE id=?";
@@ -286,6 +310,21 @@ public class GameDao implements AutoCloseable {
         }
         return null;
     }
+    public List<Tribe> listTribes() throws SQLException {
+        List<Tribe> out = new ArrayList<>();
+        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery("SELECT * FROM Tribe")) {
+            while(rs.next()){
+                Tribe t = new Tribe();
+                t.setId(rs.getInt("id"));
+                t.setName(rs.getString("name"));
+                t.setNarration(rs.getString("narration"));
+                t.setNotes(rs.getString("notes"));
+                out.add(t);
+            }
+        }
+        return out;
+    }
+
     public boolean updateTribe(Tribe t) throws SQLException {
         String sql = "UPDATE Tribe SET name=?, narration=?, notes=? WHERE id=?";
         try (PreparedStatement st = conn.prepareStatement(sql)) {
@@ -350,6 +389,29 @@ public class GameDao implements AutoCloseable {
             }
         }
         return null;
+    }
+    public List<Card> listCards() throws SQLException {
+        List<Card> out = new ArrayList<>();
+        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery("SELECT * FROM Card")) {
+            while(rs.next()){
+                Card c = new Card();
+                c.setId(rs.getInt("id"));
+                c.setName(rs.getString("name"));
+                c.setNarration(rs.getString("narration"));
+                c.setNotes(rs.getString("notes"));
+                int p = rs.getInt("power"); if(!rs.wasNull()) c.setPower(p);
+                int h = rs.getInt("health"); if(!rs.wasNull()) c.setHealth(h);
+                c.setCost(rs.getString("cost"));
+                c.setRare(rs.getInt("isRare")==1);
+                c.setUnique(rs.getInt("isUnique")==1);
+                int runId = rs.getInt("discovered_in_run_id"); if(!rs.wasNull()){ Run r = new Run(); r.setId(runId); c.setDiscoveredInRun(r); }
+                c.setTribes(getTribesForCard(c.getId()));
+                c.setAppearsInActs(getActsForCard(c.getId()));
+                c.setSigils(getSigilsForCard(c.getId()));
+                out.add(c);
+            }
+        }
+        return out;
     }
     public boolean updateCard(Card c) throws SQLException { 
         String sql = "UPDATE Card SET name=?, narration=?, notes=?, power=?, health=?, cost=?, isRare=?, isUnique=?, discovered_in_run_id=? WHERE id=?";
@@ -462,6 +524,19 @@ public class GameDao implements AutoCloseable {
             }
         }
         return null;
+    }    
+    public List<Item> listItems() throws SQLException {
+        List<Item> out = new ArrayList<>();
+        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery("SELECT * FROM Item")) {
+            while(rs.next()){
+                Item it = new Item();
+                it.setId(rs.getInt("id")); it.setName(rs.getString("name")); it.setNarration(rs.getString("narration")); it.setNotes(rs.getString("notes"));
+                int runId = rs.getInt("discovered_in_run_id"); if(!rs.wasNull()){ Run r = new Run(); r.setId(runId); it.setDiscoveredInRun(r); }
+                it.setAppearsInActs(getActsForItem(it.getId()));
+                out.add(it);
+            }
+        }
+        return out;
     }
     public boolean updateItem(Item it) throws SQLException {
         String sql = "UPDATE Item SET name=?, narration=?, notes=?, discovered_in_run_id=? WHERE id=?";
@@ -522,6 +597,19 @@ public class GameDao implements AutoCloseable {
             }
         }
         return null;
+    }    
+    public List<Character> listCharacters() throws SQLException {
+        List<Character> out = new ArrayList<>();
+        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery("SELECT * FROM `Character`")) {
+            while(rs.next()){
+                Character c = new Character();
+                c.setId(rs.getInt("id")); c.setName(rs.getString("name")); c.setNotes(rs.getString("notes")); c.setCanFight(rs.getInt("canFight")==1);
+                int runId = rs.getInt("discovered_in_run_id"); if(!rs.wasNull()){ Run r = new Run(); r.setId(runId); c.setDiscoveredInRun(r); }
+                c.setAppearsInActs(getActsForCharacter(c.getId()));
+                out.add(c);
+            }
+        }
+        return out;
     }
     public boolean updateCharacter(Character c) throws SQLException {
         String sql = "UPDATE `Character` SET name=?, notes=?, canFight=?, discovered_in_run_id=? WHERE id=?";
@@ -584,6 +672,21 @@ public class GameDao implements AutoCloseable {
             }
         }
         return null;
+    }    
+    public List<EncounterType> listEncounterTypes() throws SQLException {
+        List<EncounterType> out = new ArrayList<>();
+        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery("SELECT * FROM EncounterType")) {
+            while(rs.next()){
+                EncounterType e = new EncounterType();
+                e.setId(rs.getInt("id")); e.setName(rs.getString("name")); e.setNarration(rs.getString("narration")); e.setNotes(rs.getString("notes"));
+                e.setIcon(rs.getString("icon")); e.setBoss(rs.getInt("isBoss")==1);
+                int charId = rs.getInt("character_id"); if(!rs.wasNull()){ Character c = new Character(); c.setId(charId); e.setCharacter(c); }
+                int runId = rs.getInt("discovered_in_run_id"); if(!rs.wasNull()){ Run r = new Run(); r.setId(runId); e.setDiscoveredInRun(r); }
+                e.setAppearsInActs(getActsForEncounterType(e.getId()));
+                out.add(e);
+            }
+        }
+        return out;
     }
     public boolean updateEncounterType(EncounterType e) throws SQLException {
         String sql = "UPDATE EncounterType SET name=?, narration=?, notes=?, icon=?, isBoss=?, character_id=?, discovered_in_run_id=? WHERE id=?";
@@ -617,30 +720,4 @@ public class GameDao implements AutoCloseable {
         return out;
     }
 
-    // -------------------- Utility: list simple entities --------------------
-    public List<Puzzle> listPuzzles() throws SQLException {
-        List<Puzzle> out = new ArrayList<>();
-        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery("SELECT * FROM Puzzle")) {
-            while(rs.next()){
-                Puzzle p = new Puzzle();
-                p.setId(rs.getInt("id")); p.setName(rs.getString("name")); p.setNotes(rs.getString("notes")); p.setReward(rs.getString("reward"));
-                out.add(p);
-            }
-        }
-        return out;
-    }
-
-    public List<Sigil> listSigils() throws SQLException {
-        List<Sigil> out = new ArrayList<>();
-        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery("SELECT * FROM Sigil")) {
-            while(rs.next()){
-                Sigil s = new Sigil();
-                s.setId(rs.getInt("id")); s.setName(rs.getString("name")); s.setDescription(rs.getString("description")); s.setIcon(rs.getString("icon")); s.setNotes(rs.getString("notes"));
-                out.add(s);
-            }
-        }
-        return out;
-    }
-
-    // (Add more list helpers as needed)
 }

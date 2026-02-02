@@ -21,7 +21,7 @@ public class EncounterType {
     public Character getCharacter(){return character;} public void setCharacter(Character character){this.character=character;}
     public Run getDiscoveredInRun(){return discoveredInRun;} public void setDiscoveredInRun(Run discoveredInRun){this.discoveredInRun=discoveredInRun;}
     public List<Act> getAppearsInActs(){return appearsInActs;} public void setAppearsInActs(List<Act> appearsInActs){this.appearsInActs=appearsInActs;}
-    @Override public String toString(){ return "EncounterType{id="+id+", name="+name+"}"; }
+    @Override public String toString(){ return "EncounterType{id="+id+", name="+name+", isBoss="+isBoss+"}";}
     @Override public boolean equals(Object o){ return (o instanceof EncounterType)&&((EncounterType)o).id==id; }
     @Override public int hashCode(){ return Objects.hash(id); }
 }

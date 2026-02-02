@@ -18,7 +18,7 @@ public class Sigil {
     public String getNotes(){return notes;} public void setNotes(String notes){this.notes=notes;}
     public Run getDiscoveredInRun(){return discoveredInRun;} public void setDiscoveredInRun(Run discoveredInRun){this.discoveredInRun=discoveredInRun;}
     public List<Act> getAppearsInActs(){return appearsInActs;} public void setAppearsInActs(List<Act> appearsInActs){this.appearsInActs=appearsInActs;}
-    @Override public String toString(){ return "Sigil{id="+id+", name="+name+"}"; }
+    @Override public String toString(){ return "Sigil{id="+id+", name="+name+", notes="+notes+"}";}
     @Override public boolean equals(Object o){ return (o instanceof Sigil)&&((Sigil)o).id==id; }
     @Override public int hashCode(){ return Objects.hash(id); }
 }

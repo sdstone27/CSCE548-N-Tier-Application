@@ -15,7 +15,7 @@ public class Character {
     public boolean isCanFight(){return canFight;} public void setCanFight(boolean canFight){this.canFight=canFight;}
     public Run getDiscoveredInRun(){return discoveredInRun;} public void setDiscoveredInRun(Run discoveredInRun){this.discoveredInRun=discoveredInRun;}
     public List<Act> getAppearsInActs(){return appearsInActs;} public void setAppearsInActs(List<Act> appearsInActs){this.appearsInActs=appearsInActs;}
-    @Override public String toString(){ return "Character{id="+id+", name="+name+"}"; }
+    @Override public String toString(){ return "Character{id="+id+", name="+name+", notes="+notes+"}";}
     @Override public boolean equals(Object o){ return (o instanceof Character)&&((Character)o).id==id; }
     @Override public int hashCode(){ return Objects.hash(id); }
 }

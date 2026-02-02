@@ -11,7 +11,7 @@ public class Run {
     public int getNumber(){return number;} public void setNumber(int number){this.number=number;}
     public Act getAct(){return act;} public void setAct(Act act){this.act=act;}
     public String getNotes(){return notes;} public void setNotes(String notes){this.notes=notes;}
-    @Override public String toString(){ return "Run{id="+id+", number="+number+", actId="+(act!=null?act.getId():null)+"}";}
+    @Override public String toString(){ return "Run{id="+id+", number="+number+", act="+act+", notes="+notes+"}";}
     @Override public boolean equals(Object o){ return (o instanceof Run) && ((Run)o).id==id; }
     @Override public int hashCode(){ return Objects.hash(id); }
 }

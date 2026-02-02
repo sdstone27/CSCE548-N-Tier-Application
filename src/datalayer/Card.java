@@ -32,7 +32,7 @@ public class Card {
     public List<Tribe> getTribes(){return tribes;} public void setTribes(List<Tribe> tribes){this.tribes=tribes;}
     public Run getDiscoveredInRun(){return discoveredInRun;} public void setDiscoveredInRun(Run discoveredInRun){this.discoveredInRun=discoveredInRun;}
     public List<Act> getAppearsInActs(){return appearsInActs;} public void setAppearsInActs(List<Act> appearsInActs){this.appearsInActs=appearsInActs;}
-    @Override public String toString(){ return "Card{id="+id+", name="+name+"}"; }
+    @Override public String toString(){ return "Card{id="+id+", name="+name+", cost="+cost+", sigil count="+sigils.size()+"}";}
     @Override public boolean equals(Object o){ return (o instanceof Card)&&((Card)o).id==id; }
     @Override public int hashCode(){ return Objects.hash(id); }
 }

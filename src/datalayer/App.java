@@ -11,6 +11,20 @@ public class App {
         try (GameDao dao = new GameDao(jdbcUrl, user, pass)) {
             System.out.println("Connected.");
 
+            // --- Read phase ---
+            System.out.println("Reading tables... ");
+            for (Act o : dao.listActs()) System.out.println(o);
+            for (Run o : dao.listRuns()) System.out.println(o);
+            for (Tribe o : dao.listTribes()) System.out.println(o);
+            for (Sigil o : dao.listSigils()) System.out.println(o);
+            for (Card o : dao.listCards()) System.out.println(o);
+            for (Item o : dao.listItems()) System.out.println(o);
+            for (Character o : dao.listCharacters()) System.out.println(o);
+            for (EncounterType o : dao.listEncounterTypes()) System.out.println(o);
+            for (Puzzle o : dao.listPuzzles()) System.out.println(o);
+
+
+            // --- Create phase ---
             // Create an Act
             Act act = new Act(99, "Test Act", "Notes test act");
             dao.createAct(act);
@@ -26,7 +40,16 @@ public class App {
             dao.createTribe(tribe);
             System.out.println("Created Tribe: " + tribe);
 
-            // Create a Card linked to the run and tribe and act
+            // Create a Sigil
+            Sigil sigil = new Sigil();
+            sigil.setName("Test Sigil");
+            sigil.setDescription("desc");
+            sigil.setDiscoveredInRun(run);
+            dao.createSigil(sigil);
+            dao.addSigilToAct(sigil.getId(), act.getId());
+            System.out.println("Created Sigil: " + sigil);
+
+            // Create a Card linked to the run, tribe, act, and sigil
             Card card = new Card("Test Card");
             card.setNarration("Card narration");
             card.setCost("1G");
@@ -35,6 +58,7 @@ public class App {
             card.setDiscoveredInRun(run);
             card.setTribes(Arrays.asList(tribe));
             card.setAppearsInActs(Arrays.asList(act));
+            card.setSigils(Arrays.asList(sigil));
             dao.createCard(card);
             System.out.println("Created Card: " + card);
 
@@ -66,15 +90,6 @@ public class App {
             dao.createEncounterType(enc);
             System.out.println("Created EncounterType: " + enc);
 
-            // Create a Sigil
-            Sigil sigil = new Sigil();
-            sigil.setName("Test Sigil");
-            sigil.setDescription("desc");
-            sigil.setDiscoveredInRun(run);
-            dao.createSigil(sigil);
-            dao.addSigilToAct(sigil.getId(), act.getId());
-            System.out.println("Created Sigil: " + sigil);
-
             // Create a Puzzle
             Puzzle puzzle = new Puzzle("Test Puzzle", "notes", "reward", act, run);
             dao.createPuzzle(puzzle);
@@ -85,7 +100,20 @@ public class App {
             dao.updateAct(act);
             System.out.println("Updated Act: " + dao.getActById(act.getId()));
 
+            run.setNotes("Updated notes");
+            dao.updateRun(run);
+            System.out.println("Updated Run: " + dao.getRunById(run.getId()));
+
+            tribe.setNotes("Updated notes");
+            dao.updateTribe(tribe);
+            System.out.println("Updated Tribe: " + dao.getTribeById(tribe.getId()));
+
+            sigil.setNotes("Updated notes");
+            dao.updateSigil(sigil);
+            System.out.println("Updated Sigil: " + dao.getSigilById(sigil.getId()));
+
             card.setCost("2G");
+            card.setSigils(Arrays.asList());
             dao.updateCard(card);
             System.out.println("Updated Card: " + dao.getCardById(card.getId()));
 
@@ -101,13 +129,17 @@ public class App {
             dao.updateEncounterType(enc);
             System.out.println("Updated EncounterType: " + dao.getEncounterTypeById(enc.getId()));
 
+            puzzle.setReward("Updated reward");
+            dao.updatePuzzle(puzzle);
+            System.out.println("Updated Puzzle: " + dao.getPuzzleById(puzzle.getId()));
+
             // --- Delete phase (clean up) ---
             dao.deletePuzzle(puzzle.getId());
-            dao.deleteSigil(sigil.getId());
             dao.deleteEncounterType(enc.getId());
             dao.deleteCharacter(character.getId());
             dao.deleteItem(item.getId());
             dao.deleteCard(card.getId());
+            dao.deleteSigil(sigil.getId());
             dao.deleteTribe(tribe.getId());
             dao.deleteRun(run.getId());
             dao.deleteAct(act.getId());

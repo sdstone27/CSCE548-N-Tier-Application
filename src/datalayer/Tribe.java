@@ -10,7 +10,7 @@ public class Tribe {
     public String getName(){return name;} public void setName(String n){this.name=n;}
     public String getNarration(){return narration;} public void setNarration(String n){this.narration=n;}
     public String getNotes(){return notes;} public void setNotes(String n){this.notes=n;}
-    @Override public String toString(){ return "Tribe{id="+id+", name="+name+"}"; }
+    @Override public String toString(){ return "Tribe{id="+id+", name="+name+", notes="+notes+"}";}
     @Override public boolean equals(Object o){ return (o instanceof Tribe)&&((Tribe)o).id==id; }
     @Override public int hashCode(){ return Objects.hash(id); }
 }

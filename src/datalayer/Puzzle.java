@@ -18,7 +18,7 @@ public class Puzzle {
     public String getReward(){return reward;} public void setReward(String reward){this.reward=reward;}
     public Act getAct(){return act;} public void setAct(Act act){this.act=act;}
     public Run getDiscoveredInRun(){return discoveredInRun;} public void setDiscoveredInRun(Run discoveredInRun){this.discoveredInRun=discoveredInRun;}
-    @Override public String toString(){ return "Puzzle{id="+id+", name='"+name+"'}"; }
+    @Override public String toString(){ return "Puzzle{id="+id+", name='"+name+", reward="+reward+"}";}
     @Override public boolean equals(Object o){ return (o instanceof Puzzle)&&((Puzzle)o).id==id; }
     @Override public int hashCode(){ return Objects.hash(id); }
 }
