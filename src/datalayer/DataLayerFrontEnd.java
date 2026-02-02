@@ -1,7 +1,7 @@
 import java.sql.SQLException;
 import java.util.Arrays;
 
-public class App {
+public class DataLayerFrontEnd {
     public static void main(String[] args) {
         // NOTE: change credentials as appropriate
         String jdbcUrl = "jdbc:mariadb://localhost:3306/game_journal_db";
