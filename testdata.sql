@@ -25,8 +25,8 @@ INSERT INTO Sigil (name, description, icon, notes, discovered_in_run_id) VALUES
 -- Tribes
 INSERT INTO Tribe (name, narration, notes) VALUES
 ('Squirrel', 'n/a', 'Squirrels'),
-('Canine', 'n/a', 'Wolves');
-('Reptile', 'n/a', 'Reptiles');
+('Canine', 'n/a', 'Wolves'),
+('Reptile', 'n/a', 'Reptiles'),
 ('Bird', 'n/a', 'Birds');
 
 -- Cards
