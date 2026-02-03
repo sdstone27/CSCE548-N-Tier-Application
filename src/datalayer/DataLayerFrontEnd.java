@@ -3,8 +3,9 @@ import java.util.Arrays;
 
 public class DataLayerFrontEnd {
     public static void main(String[] args) {
-        // NOTE: change credentials as appropriate
+        // NOTE: This uses MariaDB instead of MySQL server. Make sure to add the included jar as a reference.
         String jdbcUrl = "jdbc:mariadb://localhost:3306/game_journal_db";
+        // Note: can use root, but having a separate account is safer/more secure
         String user = "game_journal_db_admin";
         String pass = "very_secure_password";
 
