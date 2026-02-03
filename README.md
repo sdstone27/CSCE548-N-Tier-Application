@@ -3,6 +3,7 @@
 ## Software Required
 1) Have MariaDB Server installed (I just used my package manager, but you may need to go to https://mariadb.org/download/?t=repo-config, click on MariaDB Server, and download whichever version matches your operating system)
 Note: Depending on your OS, you may need to install a command-line interface/client as well (ex: Ubuntu uses ```sudo apt install mariadb-server mariadb-client```) 
+Note: MariaDB may conflict with MySQl, so you may need to change the configuration in some places (see https://mariadb.com/docs/server/server-management/install-and-upgrade-mariadb/installing-mariadb/binary-packages/installing-mariadb-alongside-mysql for more details)
 
 ## Setup
 0) Ensure MariaDB is running (```sudo systemctl status mariadb```, replace status with start if it's not already started)
